@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"/>
+  <style>
+    /* Stackoverflow preview fix, please ignore */
+    .navbar-nav {
+      flex-direction: row;
+    }
+    
+    .nav-link {
+      padding-right: .5rem !important;
+      padding-left: .5rem !important;
+    }
+    
+    /* Fixes dropdown menus placed on the right side */
+    .ml-auto .dropdown-menu {
+      left: auto !important;
+      right: 0px;
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark rounded" style="background-color: slategrey;">
+  <a class="navbar-brand" href="">Admin Homepage</a>
+  <!--
+  <ul class="navbar-nav mr-auto">
+    <li class="nav-item active">
+      <a class="nav-link">Left Link 1</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link">Left Link 2</a>
+    </li>
+  </ul>
+ -->
+  <ul class="navbar-nav ml-auto">
+
+    <!--
+    <li class="nav-item">
+      <a class="nav-link">Submit Issue</a>
+    </li>
+    -->
+
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Hi {{username}}!</a>
+      <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+        <a class="dropdown-item" href="#">Account Setting</a>
+        <a class="dropdown-item" href="/logout">Sign out</a>
+      </div>
+    </li>
+  </ul>
+</nav>
+<br>
+<H1>Issues Table</H1>
+<!--Issue table -->
+<div class="col-sm-8">
+   <table class="table table-bordered">
+  <thead>
+    <tr>
+      <th scope="col">Issue ID</th>
+      <th scope="col">User ID</th>
+      <th scope="col">Title</th>
+      <th scope="col">Description</th>
+      <th scope="col">Date Posted</th>
+      <th scope="col">Status</th>
+    </tr>
+  </thead>
+         {{#each issues}}
+    <tr scope="row">
+        <td>
+            {{issue_id}}
+        </td>
+        <td>
+            {{username}}
+        </td>
+        <td>
+            {{title}}
+        </td>
+        <td>
+            {{description}}
+        </td>
+        <td>
+            {{date}}
+        </td>
+        <td>
+            <form id="myForm">
+    <Select onchange="this.form.submit();" name="status"> 
+        <option id = "disable" selected="selected" disabled>{{status}}</option> 
+        <option  value="Open">Open</option> 
+        <option  value="Work in Progress">Work in Progress</option> 
+        <option  value="Closed">Closed</option>
+         <option value="Resolved">Resolved</option>                
+    </select>
+        </form>
+
+        </td>
+    </tr>
+    {{else}}
+      {{/each}}
+</table>
+ </div>
+ 
+<br>
+<H2>Delete Issue</H2>
+<form class="form-inline">
+	<div class="form-group"> 
+		<label for="issue_id" class="control-label">Enter Issue ID to delete an issue: &nbsp </label>
+		<input type="text" class="form-control" id="issue_id" name="issue_id" placeholder="Issue Id">
+	</div>
+	
+	<div class="form-group"> 
+		<button type="submit" class="btn btn-primary" onclick="deleteIssue()">Submit</button>
+	</div>		
+	
+</form>	
+<br>
+
+<H3>Users Table</H3>
+<!--Users table -->
+<div class="col-sm-8">
+   <table class="table table-bordered">
+  <thead>
+    <tr>
+      <th scope="col">User ID</th>
+      <th scope="col">Username</th>
+      <th scope="col">Role</th>
+      <th scope="col">Disable #</th>
+    </tr>
+  </thead>
+         {{#each users}}
+    <tr scope="row">
+        <td>
+            {{user_id}}
+        </td>
+        <td>
+            {{username}}
+        </td>
+        <td>
+            {{role}}
+        </td>
+
+        <td> 
+        <form id="myForm">
+    <Select onchange="this.form.submit();" name="disable">  
+        <option id = "disable" selected="selected" disabled>{{disable}}</option> 
+        <option  value="0">Enable</option> 
+        <option  value="1">Disable</option>             
+    </select>
+        </form>
+        </td>
+
+    </tr>
+    {{else}}
+      {{/each}}
+</table>
+ </div>
+
+
+ <br>
+<H4>Delete User</H4>
+<form class="form-inline">
+	<div class="form-group"> 
+		<label for="user_id" class="control-label">Enter User ID to delete a user: &nbsp </label>
+		<input type="text" class="form-control" id="user_id" name="user_id" placeholder="User Id">
+	</div>
+	
+	<div class="form-group"> 
+		<button type="submit" class="btn btn-primary" onclick="deleteUser()" >Submit</button>
+	</div>		
+	
+</form>	
+<br>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+
+</body>
+
+{{!-- 
+<script>
+function disableUser(){
+var disable = document.getElementById("disable").value;
+var params = 'disable=' +  disable + '&' + 'user_id=' + {{user_id}};
+var xhr = new XMLHttpRequest();
+xhr.open('PUT', 'http://localhost:3000/disableUser?' + params, false);
+
+xhr.onload = xhr.onload = function() {
+ if (xhr.status === 200) {
+    alert("Updated disable status!");
+ } else {
+    alert("something went wrong");
+            }
+    };
+     xhr.send(null);
+ }
+}
+</script> --}}
+
+
+
+<script>
+
+function deleteIssue() {
+
+            const issue_id = document.getElementById("issue_id").value;
+            var params = 'issue_id=' + issue_id;
+            var xhr = new XMLHttpRequest();
+            xhr.open('DELETE', 'http://localhost:3000/deleteIssue?' + params, false);
+            xhr.onload = xhr.onload = function() {
+                if (xhr.status === 200) {
+                    alert("Issue has been Deleted");
+                    window.location.href = '/admin';
+                } else{
+                    alert("something went wrong");
+                }
+            };
+            xhr.send(null);
+        }
+
+
+function deleteUser() {
+
+            const user_id = document.getElementById("user_id").value;
+            var params = 'user_id=' + user_id;
+            var xhr = new XMLHttpRequest();
+            xhr.open('DELETE', 'http://localhost:3000/deleteUser?' + params, false);
+            xhr.onload = xhr.onload = function() {
+                if (xhr.status === 200) {
+                    alert("User has been Deleted");
+                    window.location.href = '/admin';
+                } else{
+                    alert("something went wrong");
+                }
+            };
+            xhr.send(null);
+        }
+
+</script>
+
+
+</html>
